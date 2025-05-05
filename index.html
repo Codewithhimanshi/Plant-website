@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Botanica-Plants Encyclopedia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f0fdf4;
+      --text-color: #1a202c;
+      --card-bg: #ffffff;
+      --accent-color: #38a169;
+    }
+
+    body.dark {
+      --bg-color: #1a202c;
+      --text-color: #e2e8f0;
+      --card-bg: #2d3748;
+      --accent-color: #48bb78;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 20px;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 3em;
+      color: var(--accent-color);
+      margin-bottom: 10px;
+    }
+
+    .toggle-theme {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .toggle-theme:hover {
+      background: #2f855a;
+    }
+
+    .search-bar {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .search-bar input {
+      padding: 12px;
+      width: 80%;
+      max-width: 500px;
+      border: 2px solid var(--accent-color);
+      border-radius: 30px;
+      font-size: 1em;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .search-bar input:focus {
+      border-color: #2f855a;
+    }
+
+    .plant-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 60px;
+    }
+
+    .plant-card {
+      background: var(--card-bg);
+      border-left: 6px solid var(--accent-color);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    .plant-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .plant-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .plant-card h2 {
+      margin: 0 0 10px;
+      color: var(--accent-color);
+      font-size: 1.5em;
+    }
+
+    .plant-card ul {
+      padding-left: 20px;
+      list-style: none;
+    }
+
+    .plant-card li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 8px;
+    }
+
+    .plant-card li::before {
+      content: "🌿";
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🌱 Botanica</h1>
+  <button class="toggle-theme">Toggle Theme</button>
+</header>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search for a plant...">
+</div>
+
+<div class="plant-grid" id="plantContainer"></div>
+
+<footer>
+  © 2025 Botanica. All rights reserved.
+</footer>
+
+<script>
+
+  const plants = [
+    { name: "Aloe Vera", img: "https://www.meadowsfarms.com/great-big-greenhouse-gardening-blog/wp-content/uploads/sites/2/2023/02/doug-blog-aloe-vera.jpg", desc: [
+      "Aloe Vera is a succulent known for its healing gel.",
+      "It’s widely used for treating burns and skin problems.",
+      "Requires minimal water and thrives in sunlight.",
+      "Also consumed for digestive and detox benefits.",
+      "Great for both indoor and outdoor planting."
+    ]},
+    { name: "Tulsi (Holy Basil)", img: "https://media.bunnings.com.au/api/public/content/94ba21e357a64e1ea79321aac89384c7?v=8be58d77", desc: [
+      "Tulsi is a sacred plant with medicinal value.",
+      "Its leaves help treat colds and respiratory issues.",
+      "Thrives in warm, sunny spots with light watering.",
+      "Commonly used in teas to boost immunity.",
+      "Believed to bring positive energy at home."
+    ]},
+    { name: "Mint", img: "https://plantic.in/image/blog/mint1.jpg", desc: [
+      "Mint is a fragrant herb used in food and drinks.",
+      "It relieves digestion problems and freshens breath.",
+      "Easy to grow and spreads quickly in moist soil.",
+      "Used in chutneys, teas, and desserts.",
+      "Its aroma also keeps pests away from gardens."
+    ]},
+    { name: "Money Plant", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqQR-SxqtmSX7ncLN2J9jVi0QnGmxf9v1ZBw&s", desc: [
+      "Money Plant is popular for indoor decoration.",
+      "It is believed to bring prosperity and luck.",
+      "Grows well in both water and soil.",
+      "Thrives in indirect sunlight.",
+      "Requires occasional watering."
+    ]},
+    { name: "Snake Plant", img: "https://cdn.shopify.com/s/files/1/0619/1218/7051/files/1661954674-dsc-7058-1.jpg", desc: [
+      "Snake Plant purifies indoor air naturally.",
+      "It has tall, upright, variegated leaves.",
+      "Very low maintenance and drought-resistant.",
+      "Can survive in low-light conditions.",
+      "Also called mother-in-law’s tongue."
+    ]},
+    { name: "Rose", img: "https://www.epicgardening.com/wp-content/uploads/2023/09/rose-growth-stages-1200x667.jpeg", desc: [
+      "Rose is a symbol of love and beauty.",
+      "Available in many colors and varieties.",
+      "Requires sunlight and regular pruning.",
+      "Used in perfumes and skincare products.",
+      "Attracts pollinators like bees."
+    ]},
+    { name: "Jasmine", img: "https://www.thespruce.com/thmb/TolkPzwTIRAu5a2aUO8ZSAoimm8=/683x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1518339001-fc6c5847f258415ca36403be6e813d5d.jpg", desc: [
+      "Jasmine is known for its sweet fragrance.",
+      "Often used in garlands and essential oils.",
+      "Thrives in warm climates.",
+      "Requires regular watering and sun.",
+      "Has calming and mood-lifting properties."
+    ]},
+    { name: "Neem", img: "https://m.media-amazon.com/images/I/51j0W4oSahL._AC_UF1000,1000_QL80_.jpg", desc: [
+      "Neem has strong medicinal properties.",
+      "Used in skincare and pest control.",
+      "Can be grown easily in Indian climates.",
+      "Leaves are bitter but beneficial.",
+      "Also used in organic farming."
+    ]},
+    { name: "Peepal", img: "https://anandvanfoundation.org/wp-content/uploads/2023/12/peepal_tree.jpeg", desc: [
+      "Peepal tree is considered sacred in India.",
+      "Known for releasing oxygen day and night.",
+      "Has religious and environmental significance.",
+      "Grows into a large, shady tree.",
+      "Often planted near temples."
+    ]},
+    { name: "Bamboo", img: "https://environmentcontrols.co.uk/wp-content/uploads/sites/3/2022/10/Bamboo-7.jpg", desc: [
+      "Bamboo is a fast-growing grass.",
+      "Used in construction and decoration.",
+      "Symbol of strength and flexibility.",
+      "Needs moist soil and indirect sunlight.",
+      "Popular in Asian landscaping."
+    ]},
+    { name: "Lavender", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz2I3V7uB6Wj4CakEU_lNfFQvpYjPECzVF5g&s", desc: [
+      "Lavender has a soothing scent and beautiful color.",
+      "Used in aromatherapy and beauty products.",
+      "Requires full sunlight and well-drained soil.",
+      "Repels insects like mosquitoes.",
+      "Adds elegance to gardens."
+    ]},
+    { name: "Basil", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6QRUzYt3Z1eI7fxfGW9zm1okXHKLX6cWAGQ&s", desc: [
+      "Basil is a popular herb in cooking.",
+      "Rich in antioxidants and vitamin K.",
+      "Best grown in sunny areas with moist soil.",
+      "Used in Italian, Thai, and Indian cuisine.",
+      "Also has antibacterial properties."
+    ]},
+    { name: "Cactus", img: "https://i0.wp.com/plantzone.in/wp-content/uploads/2024/08/Cactus-Plant.jpg?ssl=1", desc: [
+      "Cactus is ideal for dry environments.",
+      "Requires very little water.",
+      "Comes in many shapes and sizes.",
+      "Can bloom with beautiful flowers.",
+      "Great as indoor or outdoor decor."
+    ]},
+    { name: "Curry Leaf", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSY90buXd79lSf06gBk5wHvQtjpyrxJPekEAA&s", desc: [
+      "Used in South Indian cooking for flavor.",
+      "Contains iron and antioxidants.",
+      "Requires warm, sunny climates.",
+      "Leaves are aromatic and healthy.",
+      "Needs pruning to grow bushy."
+    ]},
+    { name: "Fern", img: "https://www.gardendesign.com/pictures/images/675x529Max/site_3/australian-tree-fern-cyathea-cooperi-shutterstock-com_17258.jpg", desc: [
+      "Fern has feather-like green leaves.",
+      "Loves shady and humid areas.",
+      "Good for indoor decoration.",
+      "Helps purify air.",
+      "Adds a tropical touch to rooms."
+    ]},
+    { name: "Orchid", img: "https://www.ambius.com/dam/jcr:b360b790-af32-49f3-93bf-497d70e2734b/1200-image-banner-stock-beautiful-dewy-pink-orchid-growing-on-tree-1158298491%20(1).webp", desc: [
+      "Orchids are exotic flowering plants.",
+      "Known for long-lasting blooms.",
+      "Need indirect light and humidity.",
+      "Grown as ornamental houseplants.",
+      "Symbolize elegance and love."
+    ]},
+    { name: "Lemon Grass", img: "https://www.marthastewart.com/thmb/zqW52gPFE35Hb_LSFqenKFgWt9o=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/lemongrass-plant-getty-0623-4b3c0979bb3f425f83232afb7b912608.jpg", desc: [
+      "Lemon Grass has a citrus scent.",
+      "Used in herbal teas and soups.",
+      "Acts as a mosquito repellent.",
+      "Needs full sun and moist soil.",
+      "Popular in Asian cuisine."
+    ]},
+    { name: "Amla", img: "https://rukminim3.flixcart.com/image/850/1000/xif0q/plant-sapling/5/c/l/no-annual-no-2-star-goosberry-small-amla-arai-nellikai-healthy-original-imagpc4qnpygp5kg.jpeg?q=20&crop=false", desc: [
+      "Amla is rich in Vitamin C.",
+      "Boosts immunity and digestion.",
+      "Used in Ayurveda and hair oils.",
+      "Small green fruit with sour taste.",
+      "Grows well in Indian climates."
+    ]},
+    { name: "Mango", img: "https://greenoceaners.com/wp-content/uploads/2024/05/MANGO-PLANT.jpeg", desc: [
+      "Mango is the king of fruits in India.",
+      "Sweet fruit loved in summer.",
+      "Large tree with dense canopy.",
+      "Requires tropical or subtropical climate.",
+      "Used in pickles, juices, and desserts."
+    ]},
+    { name: "Guava", img: "https://i0.wp.com/greenverz.com/wp-content/uploads/2023/04/Greenverz_Guava_Tree_001.jpg?fit=640%2C427&ssl=1", desc: [
+      "Guava is nutritious and rich in fiber.",
+      "Has sweet and tangy flavor.",
+      "Good for immunity and skin.",
+      "Grows in warm climates.",
+      "Produces fruit within 2-3 years."
+    ]},
+    { name: "Pineapple", img: "https://yarden.com/wp-content/uploads/pineapple-plant-blog-081021.jpg", desc: [
+      "Tropical fruit with juicy, sweet taste.",
+      "Has spiky leaves and rough skin.",
+      "Needs full sun and sandy soil.",
+      "Rich in Vitamin C and enzymes.",
+      "Takes 18–24 months to mature."
+    ]},
+    { name: "Banana", img: "https://m.media-amazon.com/images/I/51l9rTzjhEL._AC_.jpg", desc: [
+      "Banana plant gives large leaves and fruits.",
+      "Fruits are rich in potassium.",
+      "Needs a warm, humid climate.",
+      "Propagated through suckers.",
+      "Common in tropical regions."
+    ]}
+
+  ];
+
+  const container = document.getElementById('plantContainer');
+  const searchInput = document.getElementById('searchInput');
+
+  function createPlantCard(plant) {
+    const card = document.createElement('div');
+    card.className = 'plant-card';
+    card.innerHTML = `
+      <img src="${plant.img}" alt="${plant.name}">
+      <h2>${plant.name}</h2>
+      <ul>${plant.desc.map(point => `<li>${point}</li>`).join('')}</ul>
+    `;
+    return card;
+  }
+
+  function renderPlants(filter = '') {
+    container.innerHTML = '';
+    plants
+      .filter(plant => plant.name.toLowerCase().includes(filter.toLowerCase()))
+      .forEach(plant => container.appendChild(createPlantCard(plant)));
+  }
+
+  searchInput.addEventListener('input', e => {
+    renderPlants(e.target.value);
+  });
+
+  document.querySelector('.toggle-theme').addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+  });
+
+  renderPlants();
+</script>
+
+</body>
+</html>
